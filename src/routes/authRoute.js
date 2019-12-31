@@ -1,41 +1,32 @@
-const express       = require("express");
-const User          = require("../models/User");
-const authHelpers   = require("../helpers/auth_helpers");
-const router        = express.Router();
+const express             = require('express');
+const authHelpers         = require('../helpers/auth_helpers');
+const authManager         = require('../managers/authManager');
+const loginValidator      = require('../validation/loginValidator');
+const registerValidator   = require('../validation/registerValidator');
+const { validate }        = require('../validation/validate');
+const router              = express.Router();
 
-router.post("/register", async (req, res) => {
-    try {
-        const user = new User(req.body);
-        await user.save();
-        authHelpers.writeToken(req, res);
-    } catch (error) {
-        return res.status(401).json({
-            status          : "fail",
-            authorization   : null,
-            errors          : ["An unexpected error occured!"]
-        });
-    }
-});
+router.post('/login', 
+    loginValidator.validationRules(),
+    validate, 
+    authManager.login 
+);
 
-router.post("/login", async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await User.findByCredentials(username, password);
-        if (!user) {
-            return res.status(401).json({
-                status          : "fail",
-                authorization   : null,
-                errors          : ["Username or password is wrong!"]
-            });
-        }
-        authHelpers.writeToken(req, res);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
+router.post('/register', 
+    registerValidator.validationRules(),
+    validate, 
+    authManager.register 
+);
 
-router.get("/logout", authHelpers.isReqestContainsAuthHeader, authHelpers.isUserAuthenticated, (req, res) => {
-    authHelpers.deleteToken(req, res);
-});
+router.post('/logout',
+    authHelpers.isReqestContainsAuthHeader,
+    authHelpers.isUserAuthenticated,
+    authManager.logout
+);
+router.get('/profile', 
+    authHelpers.isReqestContainsAuthHeader,
+    authHelpers.isUserAuthenticated,
+    authManager.getUserProfile
+);
 
 module.exports = router;

@@ -1,25 +1,19 @@
+const { redis } = require('../redis-client');
 
-const Redis     = require('ioredis');
-const redis     = new Redis({
-    port   : process.env.REDIS_PORT,
-    host   : process.env.REDIS_HOST,
-    auth   : process.env.REDIS_PASSWORD
-});
-
-const addToken = (userData, userTokenId) => {
+const writeToken = (accessToken, user) => {
     return redis
         .pipeline()
-        .set(userTokenId, JSON.stringify(userData))
-        .expire(userTokenId, 60 * 60 * 2)
+        .set(accessToken, JSON.stringify(user))
+        .expire(accessToken, 60 * 60 * 2)
         .exec();
 }
 
-const deleteToken = (userTokenId) => {
-    return redis.del(userTokenId)
+const deleteToken = (accessToken) => {
+    return redis.del(accessToken);
 }
 
-const getUserData = (userTokenId) => {
-    return redis.get(userTokenId);
+const getUserData = (accessToken) => {
+    return redis.get(accessToken);
 }
 
-module.exports = {addToken, deleteToken, getUserData};
+module.exports = { writeToken, deleteToken, getUserData };

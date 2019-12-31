@@ -9,23 +9,28 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/baturtulek/tr-maspro.com.git"
+    "url": "https://github.com/baturtulek/Simple-Authentication-Using-Redis.git"
   },
   "private": true,
   "dependencies": {
     "@babel/core": "^7.7.5",
     "babel": "^6.23.0",
-    "bcryptjs": "^2.4.3",
+    "bcrypt": "^3.0.7",
     "dotenv": "^8.2.0",
+    "errorhandler": "^1.5.1",
     "express": "^4.17.1",
+    "express-validator": "^6.3.1",
+    "http-status": "^1.4.2",
     "ioredis": "^4.14.1",
-    "mongoose": "^5.8.1"
+    "mongoose": "^5.8.1",
+    "morgan": "^1.9.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.7.6",
     "babel-cli": "^6.26.0"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   }
 }
