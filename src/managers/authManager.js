@@ -7,16 +7,18 @@ const authHelpers   = require("../helpers/auth_helpers");
 const redisHelpers  = require('../helpers/redis_helpers');
 
 const login = (req, res) => {
-    User.find({ email: req.body.email })
+    const credentials = req.body;
+    User.find({ email: credentials.email })
     .exec()
     .then(user => {
-        if (user.length < 1) {
+        const dbUserResult = user[0];
+        if (dbUserResult.length < 1) {
             return res.status(httpStatus.NOT_FOUND).json({
                 data: null,
                 errors: ['User not found!']
               });
         }
-        bcrypt.compare(req.body.password, user[0].password, async (error, result) => {
+        bcrypt.compare(credentials.password, dbUserResult.password, async (error, result) => {
                 if (error) {
                     return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
                         data    : null,
@@ -25,7 +27,7 @@ const login = (req, res) => {
                 }
                 if (result) {
                     let accessToken = authHelpers.createToken();
-                    let result = await redisHelpers.writeToken(accessToken, user[0]);
+                    let result = await redisHelpers.writeToken(accessToken, dbUserResult);
                     if(result){
                         return res.status(httpStatus.OK).json({
                             data    : { accessToken },
@@ -74,7 +76,7 @@ const register = (req, res) => {
                         });
                         user.save()
                             .then(result => {
-                                return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+                                return res.status(httpStatus.CREATED).json({
                                     data    : null,
                                     errors  : ['User created!']
                                 });
@@ -98,7 +100,8 @@ const register = (req, res) => {
 }
 
 const logout = async (req, res) => {
-    let result = await redisHelpers.deleteToken(req.headers.authorization);
+    let accessToken = req.headers.authorization;
+    let result = await redisHelpers.deleteToken(accessToken);
     if(result) {
         return res.status(httpStatus.OK).json({
             data    : null,

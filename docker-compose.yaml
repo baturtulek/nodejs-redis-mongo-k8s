@@ -1,0 +1,27 @@
+version: '2.4'
+
+services:
+  authentication:
+    build:
+      context: ./
+    networks:
+      - authentication-network
+    environment:
+      - MONGODB_URI=mongodb+srv://batur:3ozTXbbFIyVHRisd@cluster0-qdad1.mongodb.net/test?retryWrites=true&w=majority
+      - PORT=2000
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+    ports:
+      - '2000:2000'
+    links:
+      - redis:redis
+  redis:
+    image: "redis:alpine"
+    networks:
+      - authentication-network
+    ports:
+      - '6379:6379'
+
+networks:
+  authentication-network:
+    driver: bridge

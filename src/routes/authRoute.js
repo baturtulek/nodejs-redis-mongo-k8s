@@ -23,6 +23,7 @@ router.post('/logout',
     authHelpers.isUserAuthenticated,
     authManager.logout
 );
+
 router.get('/profile', 
     authHelpers.isReqestContainsAuthHeader,
     authHelpers.isUserAuthenticated,
