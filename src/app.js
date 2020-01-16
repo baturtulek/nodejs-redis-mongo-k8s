@@ -1,41 +1,30 @@
+/* eslint-disable no-console */
 require('dotenv').config();
-const mongoose      = require('mongoose');
-const express       = require('express');
-const errorHandler  = require('errorhandler');
-const morgan        = require('morgan');
-const { redis }     = require('./redis-client'); 
-const authRoute     = require('./routes/authRoute.js');
-const app           = express();
+const express = require('express');
+const morgan = require('morgan');
+const chalk = require('chalk');
+const errorHandler = require('errorhandler');
+const authRoute = require('./routes/authRoute.js');
+const handleError = require('./middlewares/error-handler');
 
-mongoose.set('useCreateIndex', true);
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useUnifiedTopology', true);
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('Connected to Database!');
-    }).catch((error) => {
-        console.log(`Database Connection Error! ${error}`);
-    });
-
-redis.on('connect', () => {
-    console.log('Connected to Redis!');
-});
-redis.on('error' , (error) => {
-    console.log(`Redis connection error: ${error}`);
-    process.exit();
-});
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
 app.use('/v1/auth', authRoute);
+app.use(handleError.resourceNotFound);
 
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
-    app.use(errorHandler());
+  app.use(errorHandler());
+} else {
+  app.use(handleError.internalServerError);
 }
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server listening on port ${process.env.PORT}`);
+  console.log(chalk.green.bold(`App is running at http://localhost:${process.env.PORT} in ${app.get('env')} mode`));
+}).on('error', (error) => {
+  console.log(chalk.red.bold(error));
+  process.exit();
 });
-  

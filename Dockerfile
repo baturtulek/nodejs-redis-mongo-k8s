@@ -9,10 +9,10 @@ RUN apk add --no-cache make gcc g++ python && \
   npm rebuild bcrypt --build-from-source && \
   apk del make gcc g++ python
 
-ENV MONGODB_URI mongodb+srv://batur:3ozTXbbFIyVHRisd@cluster0-qdad1.mongodb.net/test?retryWrites=true&w=majority
+ENV MONGODB_URI mongodb://localhost:27017/authDb
 ENV PORT 2000
 ENV REDIS_PORT 6379
-ENV REDIS_HOST 'redis'
+ENV REDIS_HOST 127.0.0.1
 
 EXPOSE $PORT
 
