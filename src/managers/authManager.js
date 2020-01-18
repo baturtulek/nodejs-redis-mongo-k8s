@@ -1,93 +1,73 @@
 /* eslint-disable consistent-return */
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
 const User = require('../models/User');
 const { mongoose } = require('../monogoDb-client');
 const authHelpers = require('../helpers/auth_helpers');
 const redisHelpers = require('../helpers/redis_helpers');
 
-const login = (req, res) => {
-  const credentials = req.body;
-  User.find({ email: credentials.email })
-    .exec()
-    .then((dbResult) => {
-      if (dbResult.length < 1) {
-        return res.status(httpStatus.NOT_FOUND).json({
-          data: null,
-          errors: ['User not found!'],
-        });
-      }
-      const dbUser = dbResult[0];
-      bcrypt.compare(credentials.password, dbUser.password, async (error, result) => {
-        if (error) {
-          return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            data: null,
-            errors: ['Internal server error!'],
-          });
-        }
-        if (result) {
-          const accessToken = authHelpers.createToken();
-          const tokenResult = await redisHelpers.writeToken(accessToken, dbUser);
-          if (tokenResult) {
-            return res.status(httpStatus.OK).json({
-              data: { accessToken },
-              errors: [],
-            });
-          }
-        }
-        return res.status(httpStatus.UNAUTHORIZED).json({
-          data: null,
-          errors: ['Password doesnt match!'],
-        });
-      });
-    })
-    .catch(() => res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      data: null,
-      errors: ['Internal server error!'],
-    }));
+const saltRounds = 10;
+
+const createNewUser = (email, username, password) => {
+  const user = new User({
+    _id: new mongoose.Types.ObjectId(),
+    email,
+    username,
+    password,
+  });
+  return user;
 };
 
-const register = (req, res) => {
+const hashPassword = async (password) => {
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  return hashedPassword;
+};
+
+const comparePasswords = async (credentialsPassword, dbUserPassword) => {
+  const result = await bcrypt.compare(credentialsPassword, dbUserPassword);
+  return result;
+};
+
+const login = async (req, res) => {
   const credentials = req.body;
-  User.find({ email: credentials.email })
-    .exec()
-    .then((user) => {
-      if (user.length >= 1) {
-        res.status(httpStatus.CONFLICT).json({
-          data: null,
-          errors: ['Email address is already in use!'],
-        });
-      } else {
-        bcrypt.hash(credentials.password, 10, (err, hashedPassword) => {
-          if (err) {
-            res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-              data: null,
-              errors: ['Internal server error!'],
-            });
-          } else {
-            const newUser = new User({
-              _id: new mongoose.Types.ObjectId(),
-              email: credentials.email,
-              username: credentials.username,
-              password: hashedPassword,
-            });
-            newUser
-              .save()
-              .then(() => res.status(httpStatus.CREATED).json({
-                data: null,
-                errors: ['User created!'],
-              }))
-              .catch(() => res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-                data: null,
-                errors: ['Internal server error!'],
-              }));
-          }
-        });
-      }
-    })
-    .catch((err) => res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+  const dbUser = await User.findOne({ email: credentials.email });
+  if (!dbUser) {
+    return res.status(httpStatus.NOT_FOUND).json({
       data: null,
-      errors: [`Internal server error! ${err}`],
+      errors: ['User not found!'],
+    });
+  }
+  const isPasswordsMatch = await comparePasswords(credentials.password, dbUser.password);
+  if (isPasswordsMatch) {
+    const accessToken = authHelpers.createToken();
+    await redisHelpers.writeToken(accessToken, dbUser);
+    return res.status(httpStatus.OK).json({
+      data: { accessToken },
+      errors: [],
+    });
+  }
+  return res.status(httpStatus.UNAUTHORIZED).json({
+    data: null,
+    errors: ['Password doesnt match!'],
+  });
+};
+
+const register = async (req, res) => {
+  const credentials = req.body;
+  const dbUser = await User.findOne({ email: credentials.email });
+  if (dbUser) {
+    return res.status(httpStatus.CONFLICT).json({
+      data: null,
+      errors: ['Email address is already in use!'],
+    });
+  }
+  const hashedPassword = await hashPassword(credentials.password);
+  const newUser = createNewUser(credentials.email, credentials.username, hashedPassword);
+  newUser
+    .save()
+    .then(() => res.status(httpStatus.CREATED).json({
+      data: null,
+      errors: ['User created!'],
     }));
 };
 

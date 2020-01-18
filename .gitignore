@@ -9,3 +9,4 @@ node_modules
 
 # Volumes
 mongo-volume
+dump.rdb
