@@ -5,7 +5,7 @@
 node_modules
 
 # Environment Variables
-.env
+.env*
 
 # Volumes
 mongo-volume

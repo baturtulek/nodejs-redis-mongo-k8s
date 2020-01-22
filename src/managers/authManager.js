@@ -2,7 +2,6 @@
 const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
 const User = require('../models/User');
-const { mongoose } = require('../monogoDb-client');
 const authHelpers = require('../helpers/auth_helpers');
 const redisHelpers = require('../helpers/redis_helpers');
 
@@ -10,7 +9,6 @@ const saltRounds = 10;
 
 const createNewUser = (email, username, password) => {
   const user = new User({
-    _id: new mongoose.Types.ObjectId(),
     email,
     username,
     password,

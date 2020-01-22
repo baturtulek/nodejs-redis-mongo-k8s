@@ -1,17 +1,23 @@
-/* eslint-disable no-console */
 const mongoose = require('mongoose');
-const chalk = require('chalk');
+
+let dbConnection = null;
 
 mongoose.set('useCreateIndex', true);
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useUnifiedTopology', true);
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log(chalk.green.bold('Connected to Database!'));
-  }).catch((error) => {
-    console.log(chalk.red.bold(`Database Connection Error! ${error}`));
-    process.exit();
-  });
+const connectToDatabase = async () => {
+  if (dbConnection === null) {
+    if (process.env.NODE_ENV === 'lambda') {
+      dbConnection = await mongoose.connect(process.env.MONGODB_URI, {
+        bufferCommands: false,
+        bufferMaxEntries: 0,
+      });
+    } else {
+      dbConnection = await mongoose.connect(process.env.MONGODB_URI);
+    }
+  }
+  return dbConnection;
+};
 
-module.exports = { mongoose };
+module.exports = { connectToDatabase };

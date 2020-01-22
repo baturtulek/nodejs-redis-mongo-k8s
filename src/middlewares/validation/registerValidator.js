@@ -4,13 +4,13 @@ const validationRules = () => [
   body('email')
     .trim()
     .isEmail()
-    .isLength({ min: 5, max: 255 })
     .normalizeEmail(),
   body('username')
     .trim()
     .isLength({ min: 3, max: 50 })
     .escape(),
   body('password')
+    .trim()
     .isLength({ min: 5, max: 255 }),
 ];
 
