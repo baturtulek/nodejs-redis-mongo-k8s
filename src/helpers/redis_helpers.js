@@ -1,14 +1,17 @@
 const { redis } = require('../redis-client');
+const expireTimeInSec = 60 * 20;
 
-const writeToken = (accessToken, user) => redis
-  .pipeline()
-  .set(accessToken, JSON.stringify(user))
-  .expire(accessToken, 60 * 60 * 2)
-  .exec();
+const writeToken = (accessToken, user) => {
+  return redis.set(accessToken, JSON.stringify(user),'EX', expireTimeInSec);
+};
 
-const deleteToken = (accessToken) => redis.del(accessToken);
+const deleteToken = (accessToken) => {
+  return redis.del(accessToken);
+};
 
-const getUserData = (accessToken) => redis.get(accessToken);
+const getUserData = (accessToken) => {
+  return redis.get(accessToken);
+};
 
 module.exports = {
   writeToken,

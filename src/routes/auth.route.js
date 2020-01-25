@@ -23,14 +23,14 @@ router.post(
 
 router.post(
   '/logout',
-  authHelpers.isReqestContainsAuthHeader,
+  authHelpers.isRequestContainsAuthHeader,
   authHelpers.isUserAuthenticated,
   authManager.logout,
 );
 
 router.get(
   '/profile',
-  authHelpers.isReqestContainsAuthHeader,
+  authHelpers.isRequestContainsAuthHeader,
   authHelpers.isUserAuthenticated,
   authManager.getUserProfile,
 );

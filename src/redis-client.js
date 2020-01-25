@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const Redis = require('ioredis');
 const chalk = require('chalk');
 
@@ -12,7 +11,7 @@ redis.on('connect', () => {
   console.log(chalk.green.bold('Connected to Redis!'));
 });
 redis.on('error', (error) => {
-  console.log(chalk.red.bold(`Redis connection error: ${error}`));
+  console.log(chalk.red.bold(`REDIS connection error: ${error}`));
   process.exit();
 });
 

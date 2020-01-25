@@ -6,7 +6,11 @@ node_modules
 
 # Environment Variables
 .env*
+!.env.test
 
 # Volumes
 mongo-volume
 dump.rdb
+
+# Jest
+coverage

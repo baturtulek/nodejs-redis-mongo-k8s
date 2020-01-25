@@ -1,7 +1,7 @@
 {
-  "name": "BasicAuthentication",
+  "name": "nodejs-authentication",
   "version": "0.0.1",
-  "description": "Basic authentication mechanism using Token and Redis",
+  "description": "Authentication mechanism using Token and Redis",
   "author": {
     "name": "Ahmet Batur Tülek",
     "email": "batur@baturtulek.com",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/baturtulek/Simple-Authentication-Using-Redis.git"
+    "url": "https://github.com/baturtulek/nodejs-authentication.git"
   },
   "private": true,
   "dependencies": {
@@ -21,18 +21,19 @@
     "express-validator": "^6.3.1",
     "http-status": "^1.4.2",
     "ioredis": "^4.14.1",
-    "mongoose": "^5.8.1",
-    "morgan": "^1.9.1"
+    "mongoose": "^5.8.1"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.20.0"
+    "eslint-plugin-import": "^2.20.0",
+    "jest": "^25.1.0",
+    "morgan": "^1.9.1",
+    "supertest": "^4.0.2"
   },
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "development": "NODE_ENV=development node src/app.js",
-    "production": "NODE_ENV=production node src/app.js"
+    "development": "NODE_ENV=development nodemon src/server.js",
+    "production": "NODE_ENV=production node src/server.js",
+    "test": "NODE_ENV=test jest --forceExit"
   }
 }

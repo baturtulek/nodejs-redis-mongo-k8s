@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const UserSchema = mongoose.Schema({
   _id: {
     type: mongoose.Schema.Types.ObjectId,
-    default: new mongoose.Types.ObjectId(),
+    default: mongoose.Types.ObjectId(),
   },
   email: {
     type: String,

@@ -1,11 +1,9 @@
-/* eslint-disable consistent-return */
 const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
 const User = require('../models/User');
 const authHelpers = require('../helpers/auth_helpers');
 const redisHelpers = require('../helpers/redis_helpers');
-
-const saltRounds = 10;
+const passwordHashRounds = 10;
 
 const createNewUser = (email, username, password) => {
   const user = new User({
@@ -17,7 +15,7 @@ const createNewUser = (email, username, password) => {
 };
 
 const hashPassword = async (password) => {
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+  const hashedPassword = await bcrypt.hash(password, passwordHashRounds);
   return hashedPassword;
 };
 
@@ -60,8 +58,7 @@ const register = async (req, res) => {
     });
   }
   const hashedPassword = await hashPassword(credentials.password);
-  const newUser = createNewUser(credentials.email, credentials.username, hashedPassword);
-  newUser
+  const newUser = createNewUser(credentials.email, credentials.username, hashedPassword)
     .save()
     .then(() => res.status(httpStatus.CREATED).json({
       data: null,
@@ -69,29 +66,26 @@ const register = async (req, res) => {
     }));
 };
 
-const logout = async (req, res) => {
-  const accessToken = req.headers.authorization;
-  const result = await redisHelpers.deleteToken(accessToken);
-  if (result) {
-    return res.status(httpStatus.OK).json({
-      data: null,
-      errors: [],
-    });
-  }
+const logout = (req, res) => {
+  redisHelpers.deleteToken(res.locals.accessToken);
+  return res.status(httpStatus.OK).json({
+    data: null,
+    errors: [],
+  });
 };
 
-const getUserProfile = async (req, res) => {
-  const accessToken = req.headers.authorization;
-  const userData = await redisHelpers.getUserData(accessToken);
-  if (userData) {
-    return res.status(httpStatus.OK).json({
-      data: { userData },
-      errors: [],
-    });
-  }
+const getUserProfile = (req, res) => {
+  const userData = res.locals.userData;
+  return res.status(httpStatus.OK).json({
+    data: { userData },
+    errors: [],
+  });
 };
 
 module.exports = {
+  createNewUser,
+  hashPassword,
+  comparePasswords,
   login,
   register,
   logout,

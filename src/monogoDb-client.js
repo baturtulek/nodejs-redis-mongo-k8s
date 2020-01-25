@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const chalk = require('chalk');
 
 let dbConnection = null;
 
@@ -19,5 +20,14 @@ const connectToDatabase = async () => {
   }
   return dbConnection;
 };
+
+mongoose.connection.on('connected', () => {
+  console.log(chalk.green.bold('Connected to Database!'));
+});
+
+mongoose.connection.on('error', (error) => {
+  console.log(chalk.red.bold(`DATABASE Connection Error: ${error}`));
+  process.exit();
+});
 
 module.exports = { connectToDatabase };
