@@ -1,4 +1,5 @@
 node_modules
+coverage
 docker-compose.yaml
 README.md
 .eslintrc.js
@@ -6,3 +7,7 @@ README.md
 .gitignore
 .gitattributes
 .editorconfig
+jest.config.js
+jest.setup.js
+dumb.rdb
+.travis.yml

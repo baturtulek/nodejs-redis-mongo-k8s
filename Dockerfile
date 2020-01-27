@@ -14,4 +14,4 @@ ENV MONGODB_URI mongodb://localhost:27017/authDb
 
 EXPOSE $PORT
 
-ENTRYPOINT [ "node", "src/app.js" ]
+ENTRYPOINT [ "node", "src/server.js" ]

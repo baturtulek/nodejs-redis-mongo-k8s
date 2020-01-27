@@ -3,127 +3,110 @@ const supertest = require('supertest');
 const request = supertest(app);
 const User = require('../src/models/User');
 let accessToken = null;
-const mongoose = require('mongoose');
-const {redis} =require('../src/redis-client');
 
-test('Create User properly', async (done) => {  
+test('Properly register(create) user', async () => {  
   const res = await request
     .post('/v1/auth/register')
     .send({
-      email: 'deneme@deneme.com',
-      username: 'deneme',
+      email: 'email@email.com',
+      username: 'username',
       password: '12345'
     });
   expect(res.statusCode).toEqual(201);
-  done();
 });
 
-test('Create User email already in use', async (done) => {  
+test('Does not fail when email address is already in use while creating user', async () => {  
   const res = await request
     .post('/v1/auth/register')
     .send({
-      email: 'deneme@deneme.com',
-      username: 'deneme',
+      email: 'email@email.com',
+      username: 'username',
       password: '12345'
     });
   expect(res.statusCode).toEqual(409);
-  done();
 });
 
-test('Login user properly', async (done) => {  
+test('Properly login user', async () => {  
   const res = await request
     .post('/v1/auth/login')
     .send({
-      email: 'deneme@deneme.com',
+      email: 'email@email.com',
       password: '12345'
     });
   expect(res.statusCode).toEqual(200);
   accessToken = res.body.data.accessToken;
-  done();
 });
 
-test('Login User user not found ', async (done) => {  
+test('Does not fail when user not found while trying to log-in to the system', async () => {  
   const res = await request
     .post('/v1/auth/login')
     .send({
-      email: 'deneme@de.com',
+      email: 'email@e.com',
       password: '12345'
     });
   expect(res.statusCode).toEqual(404);
-  done();
 });
 
-test('Login User password doesnt match', async (done) => {  
+test('Does not fail when passwords doesnt matches while trying to log-in to the system', async () => {  
   const res = await request
     .post('/v1/auth/login')
     .send({
-      email: 'deneme@deneme.com',
+      email: 'email@email.com',
       password: '123'
     });
   expect(res.statusCode).toEqual(401);
-  done();
 });
 
-test('Get User profile', async (done) => {  
+test('Properly get User profile', async () => {  
   const res = await request
     .get('/v1/auth/profile')
     .set('Authorization', 'Bearer ' + accessToken)
   expect(res.statusCode).toEqual(200);
-  done();
 });
 
-test('Logout User', async (done) => {  
+test('Properly logout User', async () => {  
   const res = await request
     .post('/v1/auth/logout')
     .set('Authorization', 'Bearer ' + accessToken)
   expect(res.statusCode).toEqual(200);
-  done();
 });
 
-test('Server Healtcheck', async (done) => {  
+test('Server Healtcheck', async () => {  
   const res = await request
     .get('/healthcheck')
   expect(res.statusCode).toEqual(200);
-  done();
 });
 
-test('Field validation ', async (done) => {  
+test('Field validation', async () => {  
   const res = await request
     .post('/v1/auth/register')
     .send({
-      email: 'deneme',
-      username: 'da',
-      password: '12'
+      email: 'email',
+      username: 'user',
+      password: '123'
     });
   expect(res.statusCode).toEqual(422);
-  done();
 });
 
-test('Check access token', async (done) => {  
+test('Does not fail when authorization header is empty', async () => {  
   const res = await request
     .get('/v1/auth/profile')
   expect(res.statusCode).toEqual(401);
-  done();
 });
 
-test('Verify access token ', async (done) => {  
+test('Does not fail when access token is wrong', async () => {  
   const res = await request
     .get('/v1/auth/profile')
-    .set('Authorization', 'Bearer ' + 'dasdasda')
+    .set('Authorization', 'Bearer ' + 'dlsghjlnsiugalsidf')
   expect(res.statusCode).toEqual(401);
-  done();
 });
 
-test('Resource Not Found', async (done) => {  
+test('Does not fail with unknown resource', async () => {  
   const res = await request
     .get('/notfound')
   expect(res.statusCode).toEqual(404);
-  done();
 });
 
-afterAll(async (done) => {
+afterAll(async () => {
   await User.deleteMany();
-  mongoose.disconnect();
-  redis.quit()
-  done();
 });

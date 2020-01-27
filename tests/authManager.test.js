@@ -1,6 +1,6 @@
 const authManager = require('../src/managers/authManager');
 
-test('Hash Password', () => {
+test('Properly hash password', () => {
   const password = '12345';
   authManager.hashPassword(password)
     .then(result => {
@@ -8,7 +8,7 @@ test('Hash Password', () => {
     });
 });
 
-test('Compare Password', () => {
+test('Compare passwords', () => {
   const password = "12345";
   const hashedPassword = "$2a$10$gtgDpW8G2Cyu52JnXkPokecvPTcuavkPJLnlpAypg.KAp5HqBUbeq";
   authManager.comparePasswords(password, hashedPassword)

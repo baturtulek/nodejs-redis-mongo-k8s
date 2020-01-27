@@ -1,7 +1,7 @@
 {
   "name": "nodejs-authentication",
   "version": "0.2.0",
-  "description": "Authentication mechanism using Token and Redis",
+  "description": "Nodejs based authentication mechanism using MongoDB and Redis",
   "author": {
     "name": "Ahmet Batur Tülek",
     "email": "batur@baturtulek.com",
@@ -12,6 +12,7 @@
     "url": "https://github.com/baturtulek/nodejs-authentication.git"
   },
   "private": true,
+  "license": "MIT",
   "dependencies": {
     "aws-serverless-express": "^3.3.6",
     "bcryptjs": "^2.4.3",
