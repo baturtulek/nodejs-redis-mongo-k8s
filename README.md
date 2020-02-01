@@ -14,8 +14,8 @@
 
 ## Install
 1) First of all, you have to install and start Redis Server and MongoDB on your computer. You can also use MongoDB Atlas which is a MongoDB cloud service instead of installing MongoDB to your computer.
-* Redis : https://redis.io/download
-* MongoDB : https://www.mongodb.com/download-center/community
+	  * Redis : https://redis.io/download
+    * MongoDB : https://www.mongodb.com/download-center/community
 
 2) Then install the application dependencies using the following command
 
