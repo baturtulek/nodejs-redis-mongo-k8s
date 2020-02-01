@@ -13,35 +13,34 @@
 <br/>
 
 ## Install
-First of all, you have to install and start Redis Server and MongoDB on your computer. You can also use MongoDB Atlas which is a MongoDB cloud service instead of installing MongoDB to your computer.
+1) First of all, you have to install and start Redis Server and MongoDB on your computer. You can also use MongoDB Atlas which is a MongoDB cloud service instead of installing MongoDB to your computer.
 * Redis : https://redis.io/download
 * MongoDB : https://www.mongodb.com/download-center/community
 
-Then install application dependencies using the following command
+2) Then install the application dependencies using the following command
 
 ```sh
 npm install
 ```
 ## Usage
 
-* Application can be directly run using the following command
+* Application can be directly run using the following command, you can access the application from port 8080.
 
 ```sh
 npm run development
 ```
 
-* Application can be run in the Docker container using the following command. Type the command in the application root folder to the terminal. Of course docker daemon must be running. This command creates and runs three containers. One for authentication application, one for Redis and one for MongoDB. These containers communicate with each other. You can access the authentication application using port 2000 from your host operating system. Moreover, you can connect Redis and MongoDB containers to manage and display data from port 6379 and 27017 respectively.
+* Application can be run in the Docker container using the following command. Type the command in the application root folder to the terminal. Of course docker daemon must be running. This command creates and runs three containers. One for authentication application, one for Redis and one for MongoDB. These containers communicate with each other. You can access the authentication application using port 8080 from your host operating system. Moreover, you can connect Redis and MongoDB containers to manage and display data from port 6379 and 27017 respectively.
 
 ```sh
 docker-compose up
 ```
 
-* Also, the application can be run on the Serverless Architecture. Upload project to AWS Lambda. Then it is ready to handle requests. However, you have to configure Redis and MongoDB using other AWS Services. Assign the Lambda handler as shown below.
+* Also, the application can be run on the Serverless Architecture. Upload project to AWS Lambda. Then it is ready to handle requests. However, you have to configure Redis and MongoDB using other AWS Services by yourself. Assign the Lambda handler as shown below.
 
 ```sh
-src/server.handler
+src/serverless.handler
 ```
-
 
 ## Run tests
 

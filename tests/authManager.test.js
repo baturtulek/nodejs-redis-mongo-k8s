@@ -1,18 +1,14 @@
 const authManager = require('../src/managers/authManager');
 
-test('Properly hash password', () => {
+test('Properly hash password', async () => {
   const password = '12345';
-  authManager.hashPassword(password)
-    .then(result => {
-      expect(result).toHaveLength(60);
-    });
+  let result = await authManager.hashPassword(password)
+  expect(result).toHaveLength(60);
 });
 
-test('Compare passwords', () => {
+test('Compare passwords', async () => {
   const password = "12345";
   const hashedPassword = "$2a$10$gtgDpW8G2Cyu52JnXkPokecvPTcuavkPJLnlpAypg.KAp5HqBUbeq";
-  authManager.comparePasswords(password, hashedPassword)
-    .then(result => {
-      expect(result).toBe(true);
-    });
+  let result = await authManager.comparePasswords(password, hashedPassword)
+  expect(result).toBe(true);
 });

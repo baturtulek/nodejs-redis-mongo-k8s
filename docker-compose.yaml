@@ -8,12 +8,12 @@ services:
       - authentication-network
     environment:
       - NODE_ENV=production
-      - PORT=8280
+      - PORT=8080
       - REDIS_PORT=6379
       - REDIS_HOST=redis
       - MONGODB_URI=mongodb://database:27017/authDb
     ports:
-      - '2000:8280'
+      - '8080:8080'
   redis:
     image: "redis:alpine"
     networks:

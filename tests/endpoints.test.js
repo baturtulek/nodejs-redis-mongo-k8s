@@ -1,6 +1,8 @@
 const app = require('../src/app');
 const supertest = require('supertest');
 const request = supertest(app);
+const mongoose = require('mongoose');
+const {redis} = require('../src/redis-client');
 const User = require('../src/models/User');
 let accessToken = null;
 
@@ -107,6 +109,9 @@ test('Does not fail with unknown resource', async () => {
   expect(res.statusCode).toEqual(404);
 });
 
-afterAll(async () => {
+afterAll(async (done) => {
   await User.deleteMany();
+  await mongoose.connection.close();
+  await redis.quit();
+  done();
 });

@@ -1,16 +1,29 @@
+const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 const { redis } = require('../redis-client');
-const httpStatus = require('http-status');
 
 const serverStatus = (req, res) => {
   return res.status(httpStatus.OK).json({
-    timestamp: Date.now(),
-    server: process.env.SERVER_NO,
     status: 'OK',
+    release: '0.2.0',
+    server: process.env.SERVER_ID,
+    timestamp: getCurrentDate(),
     uptime: process.uptime(),
-    dbState: mongoose.STATES[mongoose.connection.readyState],
-    redisState: redis.status,
+    dbState: getDatabaseStatus(),
+    redisState: getRedisStatus(),
   });
 }
+  const getCurrentDate = () => {
+    return new Date();
+  }
+
+  const getDatabaseStatus = () => {
+    const mongoDbState = mongoose.connection.readyState;
+    return mongoose.STATES[mongoDbState];
+  }
+
+  const getRedisStatus = () => {
+    return redis.status;
+  }
 
 module.exports = { serverStatus };
