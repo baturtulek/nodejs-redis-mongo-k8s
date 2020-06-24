@@ -1,6 +1,7 @@
 language: node_js
+
 node_js:
-  - "12"
+  - '12'
 
 services:
   - mongodb
@@ -18,3 +19,18 @@ before_script:
 
 script:
   - npm test
+
+before_deploy:
+  - export ELASTIC_BEANSTALK_LABEL=nodejs-auth-app_$(git log -1 --format="%ci")
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
+  region: us-east-2
+  app: nodejs-auth
+  env: nodejs-auth-dev
+  on:
+    repo: baturtulek/nodejs-auth-private
+  bucket: elasticbeanstalk-us-east-2-937588586165

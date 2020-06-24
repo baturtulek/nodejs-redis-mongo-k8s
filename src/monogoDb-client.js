@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const chalk = require('chalk');
-
 let dbConnection = null;
 
 mongoose.set('useCreateIndex', true);

@@ -1,7 +1,8 @@
-.git
-node_modules
 coverage
+mongo-volume
+node_modules
 tests
+.git
 .editorconfig
 .env.development
 .env.test

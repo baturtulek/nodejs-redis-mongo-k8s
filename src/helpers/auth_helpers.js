@@ -2,16 +2,6 @@ const crypto = require('crypto');
 const httpStatus = require('http-status');
 const redisHelpers = require('./redis_helpers');
 
-const createToken = () => {
-  return crypto.randomBytes(64).toString('hex');
-};
-
-const getAuthToken = (authorization) => {
-  let accessToken = authorization || '';
-  accessToken = accessToken.replace('Bearer', '').trim();
-  return accessToken;
-};
-
 const isRequestContainsAuthHeader = (req, res, next) => {
   const accessToken = getAuthToken(req.headers.authorization);
   if (!accessToken) {
@@ -24,6 +14,12 @@ const isRequestContainsAuthHeader = (req, res, next) => {
   return next();
 };  
 
+const getAuthToken = (authorization) => {
+  let accessToken = authorization || '';
+  accessToken = accessToken.replace('Bearer', '').trim();
+  return accessToken;
+};
+
 const isUserAuthenticated = async (req, res, next) => {
   const userData = await redisHelpers.getUserData(res.locals.accessToken);
   if (userData === null) {
@@ -34,6 +30,10 @@ const isUserAuthenticated = async (req, res, next) => {
   }
   res.locals.userData = userData;
   return next();
+};
+
+const createToken = () => {
+  return crypto.randomBytes(64).toString('hex');
 };
 
 module.exports = {

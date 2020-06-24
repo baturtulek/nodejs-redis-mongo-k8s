@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const httpStatus = require('http-status');
-const User = require('../models/User');
+const User = require('../models/User.model.js');
 const authHelpers = require('../helpers/auth_helpers');
 const redisHelpers = require('../helpers/redis_helpers');
 const passwordHashRounds = 10;
