@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authserver
+  namespace: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - name: authserver
+        image: authserver
+        imagePullPolicy: Never
+        env:
+        - name: PORT
+          value: "8080"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_HOST
+          value: "redis.auth.svc.cluster.local"
+        - name: NODE_ENV
+          value: "production"
+        - name: MONGODB_URI
+          value: "mongodb://mongo.auth.svc.cluster.local:27017/authDb"

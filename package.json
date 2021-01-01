@@ -34,7 +34,7 @@
   },
   "scripts": {
     "development": "NODE_ENV=development nodemon src/server.js",
-    "production": "NODE_ENV=production node src/server.js",
+    "production": "NODE_ENV=production node bin/www",
     "test": "NODE_ENV=test jest --forceExit"
   }
 }
